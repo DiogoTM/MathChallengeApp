@@ -11,6 +11,8 @@ public class Operation implements Cloneable{
     private static float answer;
     private static String response;
     private static String operation;
+    private static long timeElapsed;
+
 
     public static boolean isCorrect() {
         return isCorrect;
@@ -41,6 +43,8 @@ public class Operation implements Cloneable{
         operation = GenerateOperation();
         answer = 0;
         response = "Your answer is ";
+        timeElapsed =0;
+
     }
 
     @Override

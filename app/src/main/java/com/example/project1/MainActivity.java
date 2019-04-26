@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static java.lang.System.nanoTime;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -36,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Operation myOp;
     Random myRand = new Random();
     UserLog myUser = new UserLog();
-    boolean hardMode = false;
+    boolean hardMode = false;//Mode removed in new design (part 2)
+    boolean isRunning = false;
 
     public Operation createOperation()
     {
@@ -53,14 +58,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewOperation = findViewById( R.id.textViewOperation );
         myLayout = findViewById(R.id.myLayout);
         int listButtons[] = {R.id.btn0, R.id.btn1, R.id.btn2,R.id.btn3,R.id.btn4,R.id.btn5,R.id.btn6,
-                R.id.btn7,R.id.btn8,R.id.btn9,R.id.btnDot,R.id.btnDash,R.id.btnClear,
-                R.id.btnGenerate,R.id.btnQuit,R.id.btnEqual,R.id.btnShow,R.id.btnHMode};
+                R.id.btn7,R.id.btn8,R.id.btn9,R.id.btnStart,R.id.btnDash,R.id.btnClear,
+                R.id.btnStop,R.id.btnQuit,R.id.btnEqual,R.id.btnSave,R.id.btnResults};
         for (int i = 0; i < listButtons.length; i++)
         {
             buttons[i] = findViewById(listButtons[i]);
             buttons[i].setOnClickListener(this);
         }
     }
+
 
     public void onClick(View v) {
         TextView clickedView = (TextView)v;
@@ -73,14 +79,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     temp *= -1;
                     result = Float.toString(temp);
                     break;
-
                 }
             case R.id.btnClear:
                 result = "";
                 break;
-            case R.id.btnGenerate:
-                myOp = createOperation();
-                textViewOperation.setText(myOp.getOperation());
+            case R.id.btnStart:
+                isRunning = true;
+                do {
+                    myOp = createOperation();
+                    textViewOperation.setText(myOp.getOperation());
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            myOp = createOperation();
+                            textViewOperation.setText(myOp.getOperation());
+                        }
+                    }, 10000);
+                }while (isRunning);
+                break;
+            case R.id.btnStop:
+                isRunning = false;
                 break;
             case R.id.btnQuit:
                 finish();
